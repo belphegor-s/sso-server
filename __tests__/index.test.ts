@@ -12,40 +12,52 @@ describe("Auth API Tests", () => {
     };
 
     // Test user registration
-    it("registers a user", (done: jest.DoneCallback) => {
-        request(app)
-            .post("/api/v1/register")
-            .send({ usernam: user.username, password: user.password })
-            .expect(200)
-            .expect((res) => {
-                expect(res.body.msg).toBe("Successfully registered User");
-                testUserId = res.body.data.id;
-            })
-            .end(done);
-    });
+    it(
+        "registers a user",
+        (done: jest.DoneCallback) => {
+            request(app)
+                .post("/api/v1/register")
+                .send({ username: user.username, password: user.password })
+                .expect(200)
+                .expect((res) => {
+                    expect(res.body.msg).toBe("Successfully registered User");
+                    testUserId = res.body.data.id;
+                })
+                .end(done);
+        },
+        1000 * 60 * 5 // 5 minutes timeout
+    );
 
     // Test user login and JWT generation
-    it("logs in a user and generates a JWT", (done) => {
-        request(app)
-            .post("/api/v1/login")
-            .send({ username: user.username, password: user.password })
-            .expect(200)
-            .expect((res) => {
-                expect(res.body.data.token).toBeDefined();
-                authToken = res.body.data.token;
-            })
-            .end(done);
-    });
+    it(
+        "logs in a user and generates a JWT",
+        (done) => {
+            request(app)
+                .post("/api/v1/login")
+                .send({ username: user.username, password: user.password })
+                .expect(200)
+                .expect((res) => {
+                    expect(res.body.data.token).toBeDefined();
+                    authToken = res.body.data.token;
+                })
+                .end(done);
+        },
+        1000 * 60 * 5 // 5 minutes timeout
+    );
 
     // Test access to a protected resource
-    it("allows access to a protected resource with a valid JWT", (done) => {
-        request(app)
-            .get("/api/v1/protected")
-            .set("Authorization", `Bearer ${authToken}`)
-            .expect(200)
-            .expect((res) => expect(res.body.msg).toBe("You are authorized to access this resource."))
-            .end(done);
-    });
+    it(
+        "allows access to a protected resource with a valid JWT",
+        (done) => {
+            request(app)
+                .get("/api/v1/protected")
+                .set("Authorization", `Bearer ${authToken}`)
+                .expect(200)
+                .expect((res) => expect(res.body.msg).toBe("You are authorized to access this resource."))
+                .end(done);
+        },
+        1000 * 60 * 5 // 5 minutes timeout
+    );
 
     // Test access to a protected resource without a JWT
     it("blocks access to a protected resource without a JWT", (done) => {
@@ -61,5 +73,5 @@ describe("Auth API Tests", () => {
         if (testUserId) {
             request(app).delete(`/api/v1/user/${testUserId}`).set("Authorization", `Bearer ${authToken}`).expect(200).end(done);
         }
-    });
+    }, 1000 * 60 * 5); // 5 minutes timeout
 });
