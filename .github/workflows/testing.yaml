@@ -6,6 +6,9 @@ jobs:
     tests:
         runs-on: ubuntu-latest
 
+        env:
+            JWT_SECRET_KEY: ${{ vars.JWT_SECRET_KEY }}
+
         strategy:
             matrix:
                 node-version: [18.x, 16.x]
