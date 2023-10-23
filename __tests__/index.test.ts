@@ -1,15 +1,21 @@
 import request from "supertest";
 import app from "../src/index";
 
+const randomGen = () => Math.random().toString(36).substring(2, 10);
+
 describe("Auth API Tests", () => {
     let authToken = "";
     let testUserId = "";
+    const user = {
+        username: randomGen(),
+        password: randomGen(),
+    };
 
     // Test user registration
     it("registers a user", (done: jest.DoneCallback) => {
         request(app)
             .post("/api/v1/register")
-            .send({ username: "testuser", password: "testpassword" })
+            .send({ usernam: user.username, password: user.password })
             .expect(200)
             .expect((res) => {
                 expect(res.body.msg).toBe("Successfully registered User");
@@ -22,7 +28,7 @@ describe("Auth API Tests", () => {
     it("logs in a user and generates a JWT", (done) => {
         request(app)
             .post("/api/v1/login")
-            .send({ username: "testuser", password: "testpassword" })
+            .send({ username: user.username, password: user.password })
             .expect(200)
             .expect((res) => {
                 expect(res.body.data.token).toBeDefined();
